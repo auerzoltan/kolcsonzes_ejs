@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('./database');
 var CryptoJS = require("crypto-js");
 const uuid = require('uuid');
+const moment = require('moment');
 const router = express.Router();
 const passwdRegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
@@ -68,7 +69,7 @@ router.post('/login', (req, res)=>{
         return
     }
 console.log(CryptoJS.SHA1(passwd).toString())
-    db.query(`SELECT * FROM users WHERE email=? AND passwd=?`, [email, CryptoJS.SHA1(passwd).toString()], (err, results)=>{
+    db.query(`SELECT * FROM users WHERE email=? AND password=?`, [email, CryptoJS.SHA1(passwd).toString()], (err, results)=>{
         if (err){
             req.session.msg = 'Database error!';
             req.session.severity = 'danger';
