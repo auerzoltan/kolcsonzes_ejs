@@ -30,8 +30,20 @@ router.get('/reg', (req, res) => {
 
 router.get('/newdata', (req, res)=>{
     if (req.session.isLoggedIn){
-        let today = moment(new Date()).format('YYYY-MM-DD');
-        ejs.renderFile('./views/newdata.ejs', { session: req.session, today }, (err, html)=>{
+
+        db.query(`SELECT title FROM items WHERE available = 1`, (err, results) => {
+            if (err){
+                console.log(err);
+                return
+            }
+            let today = moment(new Date()).format('YYYY-MM-DD');
+            let valasz = [];
+            results.forEach(item => {
+                valasz.push(item.title);
+                console.log(item.title);
+            });
+            console.log(valasz.length);
+            ejs.renderFile('./views/newdata.ejs', { session: req.session, today, valasz }, (err, html)=>{
             if (err){
                 console.log(err);
                 return
@@ -39,6 +51,8 @@ router.get('/newdata', (req, res)=>{
             req.session.msg = '';
             res.send(html);
         });
+        })
+        
         return
     }
     res.redirect('/');

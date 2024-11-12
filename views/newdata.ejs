@@ -1,10 +1,18 @@
 <%- include('header') %>
 
-<h4 class="mb-3">Steps</h4>
+<h4 class="mb-3">Tárgyak</h4>
 
 <%- include('message') %>
 
 <form action="/steps/newdata" method="post">
+    <div class="form-floating mb-3">
+        <select class="form-control">
+            <% valasz.forEach((item) => { %>
+                <option><%= item %></option>
+        <% }); %>
+        </select>
+        <label for="name">Kölcsönözhető termékek</label>
+    </div>
     <div class="form-floating mb-3">
         <input type="date" class="form-control" name="date" placeholder="" max="<%= today %>">
         <label for="name">Date</label>
