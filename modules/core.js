@@ -67,15 +67,16 @@ router.get('/rents', (req, res)=>{
             
             let rents = [];
             results.forEach(item => {
+                console.log(item);
+                let o =  `${String(item.rental_date).split(' ')[3]} ${String(item.rental_date).split(' ')[1]} ${String(item.rental_date).split(' ')[2]}`
+                let k = `${String(item.return_date).split(' ')[3]} ${String(item.return_date).split(' ')[1]} ${String(item.return_date).split(' ')[2]}`
                 rents.push({
-                    title: item.count + ' steps',
-                    start: new Date(item.date),
-                    allDay: true
+                    title: item.title,
+                    start: o,
+                    end: k
                 });
-                labels.push(`'${item.date}'`);
-                datas.push(item.count);
             });
-            ejs.renderFile('./views/statistics.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
+            ejs.renderFile('./views/rents.ejs', { session: req.session, rents }, (err, html)=>{
                 if (err){
                     console.log(err);
                     return
