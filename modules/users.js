@@ -41,9 +41,9 @@ router.post('/reg', (req, res) => {
             return
         }
 
-        db.query(`INSERT INTO users (ID, name, email, passwd, role) VALUES(?, ?, ?, SHA1(?), 'user')`, 
-            [uuid.v4(), name, email, passwd], (err, results)=>{
-            if (err){
+        db.query(`INSERT INTO users (user_id, name, password, email, membership_date, role) VALUES(?, ?, SHA1(?), ?, ?,  'user')`, 
+            [uuid.v4(), name, passwd, email, moment().format("YYYY.MM.DD")], (err, results)=>{
+            if (err){   
                 req.session.msg = 'Database error!';
                 req.session.severity = 'danger';
                 res.redirect('/reg');
@@ -86,7 +86,7 @@ console.log(CryptoJS.SHA1(passwd).toString())
         req.session.severity = 'info';
 
         req.session.isLoggedIn = true;
-        req.session.userID = results[0].ID;
+        req.session.userID = results[0].user_id;
         req.session.userName = results[0].name;
         req.session.userEmail = results[0].email;
         req.session.userRole = results[0].role;

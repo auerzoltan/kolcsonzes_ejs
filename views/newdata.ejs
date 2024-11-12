@@ -4,24 +4,15 @@
 
 <%- include('message') %>
 
-<form action="/steps/newdata" method="post">
+<form action="/rends/newdata" method="post">
     <div class="form-floating mb-3">
-        <select class="form-control">
+        <select class="form-control" name="rented">
             <% valasz.forEach((item) => { %>
-                <option><%= item %></option>
+                <option value="<%= item %>"><%= item %></option>
         <% }); %>
         </select>
         <label for="name">Kölcsönözhető termékek</label>
     </div>
-    <div class="form-floating mb-3">
-        <input type="date" class="form-control" name="date" placeholder="" max="<%= today %>">
-        <label for="name">Date</label>
-    </div>
-    <div class="form-floating mb-3">
-        <input type="number" class="form-control" name="stepcount" placeholder="">
-        <label for="stepcount">Stepcount</label>
-    </div>
-   
     <input class="btn btn-primary mb-3" type="submit" value="Save" name="saveBtn">
 </form>
 

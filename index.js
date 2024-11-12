@@ -4,7 +4,7 @@ var session = require('express-session');
 
 const coreRoutes = require('./modules/core');
 const userRoutes = require('./modules/users');
-const stepRoutes = require('./modules/steps');
+const rendRoutes = require('./modules/rends');
 
 const app = express();
 const port = process.env.PORT;
@@ -17,7 +17,7 @@ app.use(session({ secret: process.env.SESSION_SECRET}));
 // routes
 app.use('/', coreRoutes);
 app.use('/users', userRoutes); 
-app.use('/steps', stepRoutes);
+app.use('/rends', rendRoutes);
 
 
 app.listen(port, ()=>{

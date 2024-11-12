@@ -57,6 +57,38 @@ router.get('/newdata', (req, res)=>{
     }
     res.redirect('/');
 });
+router.get('/rents', (req, res)=>{
+    if (req.session.isLoggedIn){
+        db.query(`SELECT items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
+            if (err){
+                console.log(err);
+                return
+            }
+            
+            let rents = [];
+            results.forEach(item => {
+                rents.push({
+                    title: item.count + ' steps',
+                    start: new Date(item.date),
+                    allDay: true
+                });
+                labels.push(`'${item.date}'`);
+                datas.push(item.count);
+            });
+            ejs.renderFile('./views/statistics.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
+                if (err){
+                    console.log(err);
+                    return
+                }
+                req.session.msg = '';
+                res.send(html);
+            });
+            return
+        });
+        return
+    }
+    res.redirect('/');
+})
 
 router.get('/statistics', (req, res)=>{
     if (req.session.isLoggedIn){
