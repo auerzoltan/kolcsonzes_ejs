@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Nov 13. 09:57
+-- Létrehozás ideje: 2024. Nov 13. 11:24
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -40,7 +40,15 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`item_id`, `title`, `type`, `available`) VALUES
 (1, 'A kőszívű ember fiai', 'konyv', 1),
-(2, 'A szürke 50 árnyalata', 'film', 0);
+(2, 'A szürke 50 árnyalata', 'film', 0),
+(3, 'Vuk', 'konyv', 1),
+(4, 'Az Ajtó', 'konyv', 0),
+(5, 'Az ördög Pradát visel', 'film', 0),
+(6, 'Isten hozta, Őrnagy úr!', 'film', 0),
+(7, 'Egri csillagok', 'konyv', 1),
+(8, 'Tüskevár', 'film', 0),
+(9, 'Az aranyember', 'film', 1),
+(10, 'Egy magyar nábob', 'film', 0);
 
 -- --------------------------------------------------------
 
@@ -53,10 +61,20 @@ CREATE TABLE `rentals` (
   `user_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `rental_date` date NOT NULL,
-  `return_due` tinyint(1) NOT NULL,
+  `return_due` date NOT NULL,
   `return_date` date DEFAULT NULL,
   `returned` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+--
+-- A tábla adatainak kiíratása `rentals`
+--
+
+INSERT INTO `rentals` (`rental_id`, `user_id`, `item_id`, `rental_date`, `return_due`, `return_date`, `returned`) VALUES
+(5, 58000001, 1, '2024-11-13', '2000-01-27', '2024-11-13', 1),
+(6, 58000001, 7, '2024-11-13', '2024-11-16', '2024-11-13', 1),
+(7, 58000001, 7, '2024-11-13', '2024-11-16', '2024-11-13', 1),
+(8, 58000001, 5, '2024-11-13', '2024-11-16', NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -113,13 +131,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT a táblához `rentals`
 --
 ALTER TABLE `rentals`
-  MODIFY `rental_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `rental_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT a táblához `users`
