@@ -28,17 +28,6 @@ router.get('/reg', (req, res) => {
     });
 });
 
-router.get('/statistics', (req, res) => {
-    ejs.renderFile('./views/statistics.ejs', { session: req.session }, (err, html)=>{
-        if (err){
-            console.log(err);
-            return
-        }
-        req.session.msg = '';
-        res.send(html);
-    });
-});
-
 router.get('/newdata', (req, res)=>{
     if (req.session.isLoggedIn){
 
@@ -132,6 +121,7 @@ router.get('/return/:id/:rid', (req, res) =>{
                             res.redirect('/newdata');
                             return
                         }
+                        location.reload()
                         return
                     });
                 return
@@ -142,45 +132,49 @@ router.get('/return/:id/:rid', (req, res) =>{
 )
 
 router.get('/statistics', (req, res)=>{
+    console.log("Statisztika meghívva");
     if (req.session.isLoggedIn){
-
-        db.query(`SELECT * FROM stepdatas WHERE userID=? ORDER BY date ASC`, [req.session.userID], (err, results) => {
+        let borrowed = [];
+        let away = [];
+        db.query(`SELECT items.type, COUNT(rentals.item_id) AS total_rented FROM rentals JOIN items ON rentals.item_id = items.item_id GROUP BY items.type`, (err, results) => {
             if (err){
                 console.log(err);
                 return
             }
-            
-            let events = [];
-            let labels = [];
-            let datas = [];
-
-            let total = 0;
-            results.forEach(item => {
-                item.date = moment(item.date).format('YYYY.MM.DD.');
-                total += item.count;
-                events.push({
-                    title: item.count + ' steps',
-                    start: new Date(item.date),
-                    allDay: true
-                });
-                labels.push(`'${item.date}'`);
-                datas.push(item.count);
+            results.forEach(result => {
+                let obj = {};
+                obj.type = result.type;
+                obj.count = result.total_rented;
+                borrowed.push(obj);
             });
 
-            ejs.renderFile('./views/statistics.ejs', { session: req.session, results, total, events, labels, datas }, (err, html)=>{
+
+            db.query(`SELECT items.item_id, items.title, items.type, rentals.rental_date, rentals.return_due FROM rentals JOIN items ON rentals.item_id = items.item_id WHERE rentals.returned = 0`, (err, resultss) => {
                 if (err){
                     console.log(err);
                     return
                 }
-                req.session.msg = '';
-                res.send(html);
+                resultss.forEach(result => {
+                    let obj = {};
+                    obj.title = result.title;
+                    obj.when = `${String(result.return_due).split(' ')[3]}. ${String(result.return_due).split(' ')[1]}. ${String(result.return_due).split(' ')[2]}`;
+                    away.push(obj);
+                });
+                console.log("Sex:");
+                console.log(away);
+                ejs.renderFile('./views/statistics.ejs', { session: req.session, borrowed, away }, (err, html)=>{
+                    if (err){
+                        console.log(err);
+                        return
+                    }
+                    req.session.msg = '';
+                    res.send(html);
+                    });
+                return;
             });
-            return
-
+        return;
         });
-
-        return
-        
+        return;   
     }
     res.redirect('/');
 });
