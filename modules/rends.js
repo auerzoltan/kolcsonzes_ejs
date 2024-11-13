@@ -4,7 +4,7 @@ const uuid = require('uuid');
 const moment = require('moment');
 const router = express.Router();
 
-// STEPS routes
+// REND routes
 
 router.post('/newdata', (req, res)=>{
      let { rented } = req.body;
@@ -33,7 +33,7 @@ router.post('/newdata', (req, res)=>{
                     res.redirect('/newdata');
                     return
                 }
-                db.query(`INSERT INTO rentals(user_id, item_id, rental_date, return_date) VALUES (?, ?, ?, ?)`, [req.session.userID, results[0].item_id, moment().format("YYYY.MM.DD"), moment().add(3, 'd').format("YYYY.MM.DD")], (err, resultsss) =>{
+                db.query(`INSERT INTO rentals(user_id, item_id, rental_date, return_due, returned) VALUES (?, ?, ?, ?, ?)`, [req.session.userID, results[0].item_id, moment().format("YYYY.MM.DD"), moment().add(3, 'd').format("YYYY.MM.DD"), 0], (err, resultsss) =>{
                     if (err){
                         req.session.msg = 'Database error! (insert)' + err;
                         req.session.severity = 'danger';

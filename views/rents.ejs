@@ -21,7 +21,13 @@
                 <td><%= item.title %></td>
                 <td><%= item.start %></td>
                 <td><%= item.end %></td>
-                <td class="text-end"><a class="btn btn-primary" href="/return/<%= item.id %>/<%= item.rentid %>">Visszahozva</a></td>
+                <td class="text-end">
+                    <% if(item.back == 0){ %>
+                        <a class="btn btn-primary" href="/return/<%= item.id %>/<%= item.rentid %>">Visszahozatal</a>
+                      <% } else{ %>  
+                        <a>Visszahozva</a>
+                     <% } %>
+                </td>
             </tr>
 
         <% }); %>

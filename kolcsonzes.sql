@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Nov 06. 09:31
+-- Létrehozás ideje: 2024. Nov 13. 09:57
 -- Kiszolgáló verziója: 10.4.32-MariaDB
 -- PHP verzió: 8.2.12
 
@@ -34,6 +34,14 @@ CREATE TABLE `items` (
   `available` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
+--
+-- A tábla adatainak kiíratása `items`
+--
+
+INSERT INTO `items` (`item_id`, `title`, `type`, `available`) VALUES
+(1, 'A kőszívű ember fiai', 'konyv', 1),
+(2, 'A szürke 50 árnyalata', 'film', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -45,7 +53,9 @@ CREATE TABLE `rentals` (
   `user_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `rental_date` date NOT NULL,
-  `return_date` date DEFAULT NULL
+  `return_due` tinyint(1) NOT NULL,
+  `return_date` date DEFAULT NULL,
+  `returned` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
 
 -- --------------------------------------------------------
@@ -57,9 +67,19 @@ CREATE TABLE `rentals` (
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `membership_date` date NOT NULL
+  `membership_date` date NOT NULL,
+  `role` enum('user','admin') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_hungarian_ci;
+
+--
+-- A tábla adatainak kiíratása `users`
+--
+
+INSERT INTO `users` (`user_id`, `name`, `password`, `email`, `membership_date`, `role`) VALUES
+(58000000, 'Balsors', '9008bd3542db0720fdfc571c63012d21e2916691', 'Hi@mn.us', '2024-11-12', 'user'),
+(58000001, 'ZOOBI', '74ea29956284a1a41221f79f2ad887b7ff276763', 'zoobi@zoobi.zoobi', '2024-11-13', 'user');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -93,19 +113,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT a táblához `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT a táblához `rentals`
 --
 ALTER TABLE `rentals`
-  MODIFY `rental_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rental_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT a táblához `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58000002;
 
 --
 -- Megkötések a kiírt táblákhoz

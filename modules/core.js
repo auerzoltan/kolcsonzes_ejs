@@ -68,7 +68,7 @@ router.get('/newdata', (req, res)=>{
 });
 router.get('/rents', (req, res)=>{
     if (req.session.isLoggedIn){
-        db.query(`SELECT rentals.rental_id, rentals.item_id, items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
+        db.query(`SELECT rentals.returned, rentals.rental_id, rentals.item_id, items.title, rentals.rental_date, rentals.return_date, rentals.return_due FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
             if (err){
                 console.log(err);
                 return
@@ -76,15 +76,21 @@ router.get('/rents', (req, res)=>{
             
             let rents = [];
             results.forEach(item => {
-                console.log(item);
-                let o =  `${String(item.rental_date).split(' ')[3]}. ${String(item.rental_date).split(' ')[1]}. ${String(item.rental_date).split(' ')[2]}`
-                let k = `${String(item.return_date).split(' ')[3]}. ${String(item.return_date).split(' ')[1]}. ${String(item.return_date).split(' ')[2]}`
+                let o =  `${String(item.rental_date).split(' ')[3]}. ${String(item.rental_date).split(' ')[1]}. ${String(item.rental_date).split(' ')[2]}`;
+                let k;
+                if (item.return_date != null) {
+                    k = `${String(item.return_date).split(' ')[3]}. ${String(item.return_date).split(' ')[1]}. ${String(item.return_date).split(' ')[2]}`;
+                }
+                else{
+                k = `Due ${String(item.return_due).split(' ')[3]}. ${String(item.return_due).split(' ')[1]}. ${String(item.return_due).split(' ')[2]}`;
+                }
                 rents.push({
                     id: item.item_id,
                     rentid: item.rental_id,
                     title: item.title,
                     start: o,
-                    end: k
+                    end: k,
+                    back: item.returned
                 });
             });
             ejs.renderFile('./views/rents.ejs', { session: req.session, rents }, (err, html)=>{
@@ -110,7 +116,7 @@ router.get('/return/:id/:rid', (req, res) =>{
             res.status(203).send('Hiányzó azonosító!');
             return;
         } 
-          db.query(`UPDATE rentals SET return_date=? WHERE rental_id=?`, [moment().format('YYYY-MM-DD'), req.params.rid], (err, results)=>{
+          db.query(`UPDATE rentals SET return_date=?, returned=1 WHERE rental_id=?`, [moment().format('YYYY-MM-DD'), req.params.rid], (err, results)=>{
             console.log("Update...OK!");
                 if (err){
                     req.session.msg = 'Database error! (update)';
