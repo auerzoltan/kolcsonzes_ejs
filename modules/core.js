@@ -59,7 +59,7 @@ router.get('/newdata', (req, res)=>{
 });
 router.get('/rents', (req, res)=>{
     if (req.session.isLoggedIn){
-        db.query(`SELECT items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
+        db.query(`SELECT rentals.item_id, items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
             if (err){
                 console.log(err);
                 return
@@ -68,9 +68,10 @@ router.get('/rents', (req, res)=>{
             let rents = [];
             results.forEach(item => {
                 console.log(item);
-                let o =  `${String(item.rental_date).split(' ')[3]} ${String(item.rental_date).split(' ')[1]} ${String(item.rental_date).split(' ')[2]}`
-                let k = `${String(item.return_date).split(' ')[3]} ${String(item.return_date).split(' ')[1]} ${String(item.return_date).split(' ')[2]}`
+                let o =  `${String(item.rental_date).split(' ')[3]}. ${String(item.rental_date).split(' ')[1]}. ${String(item.rental_date).split(' ')[2]}`
+                let k = `${String(item.return_date).split(' ')[3]}. ${String(item.return_date).split(' ')[1]}. ${String(item.return_date).split(' ')[2]}`
                 rents.push({
+                    id: item.item_id,
                     title: item.title,
                     start: o,
                     end: k
@@ -90,6 +91,13 @@ router.get('/rents', (req, res)=>{
     }
     res.redirect('/');
 })
+
+router.get('/return/:id', (req, res) =>{
+    if (req.session.isLoggedIn){
+    
+    }
+}
+)
 
 router.get('/statistics', (req, res)=>{
     if (req.session.isLoggedIn){
