@@ -28,6 +28,17 @@ router.get('/reg', (req, res) => {
     });
 });
 
+router.get('/statistics', (req, res) => {
+    ejs.renderFile('./views/statistics.ejs', { session: req.session }, (err, html)=>{
+        if (err){
+            console.log(err);
+            return
+        }
+        req.session.msg = '';
+        res.send(html);
+    });
+});
+
 router.get('/newdata', (req, res)=>{
     if (req.session.isLoggedIn){
 
