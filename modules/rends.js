@@ -26,7 +26,6 @@ router.post('/newdata', (req, res)=>{
 
         if (results.length > 0){
             // update
-            console.log(req.session.userID)
             db.query(`UPDATE items SET available = 0 WHERE item_id=?`, [results[0].item_id], (err, resultss)=>{
                 if (err){
                     req.session.msg = 'Database error! (update)';

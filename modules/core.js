@@ -40,9 +40,7 @@ router.get('/newdata', (req, res)=>{
             let valasz = [];
             results.forEach(item => {
                 valasz.push(item.title);
-                console.log(item.title);
             });
-            console.log(valasz.length);
             ejs.renderFile('./views/newdata.ejs', { session: req.session, today, valasz }, (err, html)=>{
             if (err){
                 console.log(err);
@@ -59,7 +57,7 @@ router.get('/newdata', (req, res)=>{
 });
 router.get('/rents', (req, res)=>{
     if (req.session.isLoggedIn){
-        db.query(`SELECT rentals.item_id, items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
+        db.query(`SELECT rentals.rental_id, rentals.item_id, items.title, rentals.rental_date, rentals.return_date FROM rentals INNER JOIN items ON items.item_id = rentals.item_id WHERE user_id = ? ORDER BY rental_date DESC`, [req.session.userID], (err, results) => {
             if (err){
                 console.log(err);
                 return
@@ -72,6 +70,7 @@ router.get('/rents', (req, res)=>{
                 let k = `${String(item.return_date).split(' ')[3]}. ${String(item.return_date).split(' ')[1]}. ${String(item.return_date).split(' ')[2]}`
                 rents.push({
                     id: item.item_id,
+                    rentid: item.rental_id,
                     title: item.title,
                     start: o,
                     end: k
@@ -92,9 +91,35 @@ router.get('/rents', (req, res)=>{
     res.redirect('/');
 })
 
-router.get('/return/:id', (req, res) =>{
+router.get('/return/:id/:rid', (req, res) =>{
+    console.log("return function meghívva");
     if (req.session.isLoggedIn){
-    
+        console.log("Session...OK!");
+        if (!req.params.id || !req.params.rid) {
+            res.status(203).send('Hiányzó azonosító!');
+            return;
+        } 
+          db.query(`UPDATE rentals SET return_date=? WHERE rental_id=?`, [moment().format('YYYY-MM-DD'), req.params.rid], (err, results)=>{
+            console.log("Update...OK!");
+                if (err){
+                    req.session.msg = 'Database error! (update)';
+                    req.session.severity = 'danger';
+                    res.redirect('/newdata');
+                    return
+                }
+                db.query(`UPDATE items SET available=1 WHERE item_id=?`, [req.params.id], (err, resultss)=>{
+                    console.log("Update...OK!");
+                        if (err){
+                            req.session.msg = 'Database error! (update)';
+                            req.session.severity = 'danger';
+                            res.redirect('/newdata');
+                            return
+                        }
+                        return
+                    });
+                return
+            });
+            return
     }
 }
 )

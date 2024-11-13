@@ -21,7 +21,7 @@
                 <td><%= item.title %></td>
                 <td><%= item.start %></td>
                 <td><%= item.end %></td>
-                <td class="text-end"><button class="btn btn-primary" href="/return/<%= item.id %>">Visszahozva</button></td>
+                <td class="text-end"><a class="btn btn-primary" href="/return/<%= item.id %>/<%= item.rentid %>">Visszahozva</a></td>
             </tr>
 
         <% }); %>
