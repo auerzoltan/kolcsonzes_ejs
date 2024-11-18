@@ -121,7 +121,8 @@ router.get('/return/:id/:rid', (req, res) =>{
                             res.redirect('/newdata');
                             return
                         }
-                        location.reload()
+                        res.redirect('/rents');
+
                         return
                     });
                 return
